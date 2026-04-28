@@ -1,9 +1,76 @@
 _format_version: "3.0"
 
 services:
-  - name: demo-service
-    url: https://httpbin.org
+  - name: supabase-crud-service
+    url: https://crud-rest-supabase.onrender.com
+
     routes:
-      - name: demo-route
+      # 🔍 GET
+      - name: get-route
         paths:
-          - /test
+          - /api/v1/
+        methods:
+          - GET
+
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 60
+
+          - name: proxy-cache
+            config:
+              request_method:
+                - GET
+              response_code:
+                - 200
+              content_type:
+                - application/json
+              cache_ttl: 30
+              strategy: memory
+
+      # ➕ POST
+      - name: post-route
+        paths:
+          - /api/v1/
+        methods:
+          - POST
+
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 20
+
+      # ✏️ PUT
+      - name: put-route
+        paths:
+          - /api/v1/
+        methods:
+          - PUT
+
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 20
+
+      # ❌ DELETE
+      - name: delete-route
+        paths:
+          - /api/v1/
+        methods:
+          - DELETE
+
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 10
+
+consumers:
+  - username: client
+
+keyauth_credentials:
+  - consumer: client
+    key: mi-api-key
+
+plugins:
+  # 🔐 seguridad global simple
+  - name: key-auth
