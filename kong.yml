@@ -22,7 +22,7 @@ services:
           # 🚦 Rate limiting por endpoint
           - name: rate-limiting
             config:
-              minute: 20
+              minute: 10
               policy: local
 
           # ⚡ Cache SOLO para GET
