@@ -1,0 +1,9 @@
+_format_version: "3.0"
+
+services:
+  - name: demo-service
+    url: https://httpbin.org
+    routes:
+      - name: demo-route
+        paths:
+          - /test
