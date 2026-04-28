@@ -1,5 +1,8 @@
 _format_version: "3.0"
 
+############################
+# 🌐 SERVICES
+############################
 services:
   - name: supabase-api
     url: https://crud-rest-supabase.onrender.com
@@ -14,3 +17,67 @@ services:
           - POST
           - PUT
           - DELETE
+
+        plugins:
+          # 🚦 Rate limiting por endpoint
+          - name: rate-limiting
+            config:
+              minute: 20
+              policy: local
+
+          # ⚡ Cache SOLO para GET
+          - name: proxy-cache
+            config:
+              request_method:
+                - GET
+              response_code:
+                - 200
+              content_type:
+                - application/json
+              cache_ttl: 30
+              strategy: memory
+
+############################
+# 🌍 ROOT ENDPOINT (evidencia)
+############################
+  - name: root-service
+    url: https://httpbin.org
+
+    routes:
+      - name: root-route
+        paths:
+          - /
+
+############################
+# 🔧 GLOBAL PLUGINS (evidencia clara)
+############################
+plugins:
+  # 🔍 Header visible para demostrar uso de Kong
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - "X-Gateway: Kong"
+
+  # 🔁 Header en request (debug backend)
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - "X-From-Kong:true"
+
+############################
+# 🔐 (Opcional) SEGURIDAD
+############################
+consumers:
+  - username: demo-user
+
+keyauth_credentials:
+  - consumer: demo-user
+    key: demo-key
+
+plugins:
+  - name: key-auth
+    config:
+      key_names:
+        - apikey
